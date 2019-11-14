@@ -20,3 +20,9 @@ app.listen(port, function(){
 app.get('/' , function(req,res,next){
 	res.render('login', {page_name:'login'});
 });
+
+app.post('/masterlog' , function(req, res, next){
+	let master = req.body.master_name;
+	console.log(master);
+	// logic where i watch in my db if the master already there and if not i put em in
+});
