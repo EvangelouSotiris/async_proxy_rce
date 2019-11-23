@@ -24,5 +24,9 @@ app.get('/' , function(req,res){
 app.post('/masterlog' , function(req, res){
 	let master = req.body.master_name;
 	console.log(master);
-	// logic where i watch in my db if the master already there and if not i put em in
+	res.render('master_console', {page_name: master + '\'s console'});
+});
+
+app.post('/command_handler' , function(req, res){
+	let new_command = req.body.new_command;
 });
