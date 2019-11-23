@@ -17,11 +17,11 @@ app.listen(port, function(){
 	console.log('App started on port '+port);
 });
 
-app.get('/' , function(req,res,next){
+app.get('/' , function(req,res){
 	res.render('login', {page_name:'login'});
 });
 
-app.post('/masterlog' , function(req, res, next){
+app.post('/masterlog' , function(req, res){
 	let master = req.body.master_name;
 	console.log(master);
 	// logic where i watch in my db if the master already there and if not i put em in
