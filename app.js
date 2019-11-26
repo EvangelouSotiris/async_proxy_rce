@@ -24,7 +24,7 @@ app.get('/' , function(req,res){
 app.post('/masterlog' , function(req, res){
 	let master = req.body.master_name;
 	console.log(master);
-	res.render('master_console', {page_name: master + '\'s console'});
+	res.render('master_console', {page_name: master + '\'s console', master_name: master});
 });
 
 app.post('/command_handler' , function(req, res){
