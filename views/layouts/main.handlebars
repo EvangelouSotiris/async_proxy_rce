@@ -24,5 +24,15 @@
 	</head>
 	<body>
 		{{{body}}}
+		<div style="text-align:center; color:#F8B32F;">
+			{{#if error}} 
+				<div style="margin-bottom: 10px">{{error}}</div>
+				<form method='POST' action="/create_and_log">
+					<input type="hidden" name="master_pass" value="{{master}}">
+					<input type="hidden" name="master_name" value="{{pass}}">
+					<input type="submit" value="Accept">
+				</form>
+			{{/if}}
+		</div>
 	</body>
 </hmtl>
