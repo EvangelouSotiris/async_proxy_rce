@@ -23,7 +23,10 @@ app.get('/' , function(req,res){
 
 app.post('/masterlog' , function(req, res){
 	let master = req.body.master_name;
-	console.log(master);
+	let pass = req.body.master_pass;
+	//Login checking logic
+	
+	//
 	res.render('master_console', {page_name: master + '\'s console', master_name: master});
 });
 
