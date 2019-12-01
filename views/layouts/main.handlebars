@@ -28,8 +28,8 @@
 			{{#if error}} 
 				<div style="margin-bottom: 10px">{{error}}</div>
 				<form method='POST' action="/create_and_log">
-					<input type="hidden" name="master_pass" value="{{master}}">
-					<input type="hidden" name="master_name" value="{{pass}}">
+					<input type="hidden" name="master_name" value="{{master}}">
+					<input type="hidden" name="master_pass" value="{{pass}}">
 					<input type="submit" value="Accept">
 				</form>
 			{{/if}}
