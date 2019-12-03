@@ -44,25 +44,24 @@ function return_formatted_date() {
 	let hours = date_ob.getHours();
 	let minutes = date_ob.getMinutes();
 	let seconds = date_ob.getSeconds();
-	return(hours + ":" + minutes + ":" + seconds);
+	return(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
 } 
 
 app.post('/masterlog' , function(req, res){
-	let master = req.body.master_name;
+	let master = req.body.master;
 	let pass = req.body.master_pass;
 	//Login checking logic
 	con.connect(function(err) {
 		con.query("select count(username) from master_info where username = '" + master + "' and password = '" + pass +"'", function (err, result, fields) {
     			if (err) { throw err;}
-			console.log(result);
 			if (result[0]['count(username)'] == 0){
-				con.query("update master_info set ts_login ='" + return_formatted_date + "' where username = '" + master + "'", function (err, result, fields) {
-					res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
-				});
+				//create the acc and log in after asking if its okay
+				res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
 			}
 			else {
-				//create the acc and log in after asking if its okay
-				res.render('master_console', {page_name: master + '\'s console', master_name: master});
+				con.query("update master_info set ts_login ='" + return_formatted_date + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
+					res.render('master_console', {page_name: master + '\'s console', master: master});
+				});
 			}
 		});
 	});	
@@ -70,20 +69,30 @@ app.post('/masterlog' , function(req, res){
 
 //TODO
 //1) ALLAGH TOU QUERY ME COUNT GIATI TWRA KAI O XRISTIS NA YPARXEI PALI THA VGALEI ERROR OTI DEN YPARXEI
-//2) NA VALOUME TO TS_LOGIN PEDIO NA EXEI THN WRA KANONIKA ME KWDIKA
-//3) OTAN KANEI LOGIN IN TO LOGGED NA GINETAI 1 KAI NA VALOUME LOGOUT POU KANEI TO LOGGED KSANA 0 (H AN EKLEISE TO SESSION)
 
 app.post('/create_and_log', function(req,res){
-	let master = req.body.master_name;
+	let master = req.body.master;
 	let pass = req.body.master_pass;
 	con.connect(function(err) {
 		con.query("insert into master_info (username, password, ts_login, logged) VALUES ('" + master + "', '" + pass + "', '" + return_formatted_date() + "', '1')", function (err, result, fields) {
     			if (err) { throw err;}
 		});
 	});
-	res.render('master_console', {page_name: master + '\'s console', master_name: master});
+	res.render('master_console', {page_name: master + '\'s console', master: master});
 });
 
 app.post('/command_handler' , function(req, res){
 	let new_command = req.body.new_command;
+});
+
+
+app.post('/logout', function(req,res){
+	let master = req.body.master;
+	console.log(master);
+	con.connect(function(err) {
+		con.query("update master_info set logged = 0 where username = '" + master + "'", function (err, result, fields) {
+    			if (err) { throw err;}
+			res.redirect('/');
+		});
+	});
 });

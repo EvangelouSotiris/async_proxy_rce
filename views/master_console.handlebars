@@ -13,10 +13,14 @@
 	<div style="color: white;">
 		General info
 		<br>
-		Master's name: {{master_name}}
+		Master's name: {{master}}
 		<br>
 		Slaves' name
 		<br>
+		<form method='POST' action="/logout">
+			<input type="hidden" name="master" value={{master}}>
+			<input type="submit" value="Log out">
+		</form>
 	</div>
 	<div id="console" style="text-align: center;">
 		<iframe style="border: solid 2px; width: 30%; height: 10%; margin-bottom: 30px; margin-top: 20px" src=""></iframe> 
