@@ -36,6 +36,17 @@ app.get('/' , function(req,res){
 	res.render('login', {page_name:'login'});
 });
 
+function return_formatted_date() { 
+	let date_ob = new Date();
+	let date = ("0" + date_ob.getDate()).slice(-2);
+	let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+	let year = date_ob.getFullYear();
+	let hours = date_ob.getHours();
+	let minutes = date_ob.getMinutes();
+	let seconds = date_ob.getSeconds();
+	return(hours + ":" + minutes + ":" + seconds);
+} 
+
 app.post('/masterlog' , function(req, res){
 	let master = req.body.master_name;
 	let pass = req.body.master_pass;
@@ -45,7 +56,9 @@ app.post('/masterlog' , function(req, res){
     			if (err) { throw err;}
 			console.log(result);
 			if (result[0]['count(username)'] == 0){
-				res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
+				con.query("update master_info set ts_login ='" + return_formatted_date + "' where username = '" + master + "'", function (err, result, fields) {
+					res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
+				});
 			}
 			else {
 				//create the acc and log in after asking if its okay
@@ -64,7 +77,7 @@ app.post('/create_and_log', function(req,res){
 	let master = req.body.master_name;
 	let pass = req.body.master_pass;
 	con.connect(function(err) {
-		con.query("insert into master_info (username, password, ts_login, logged) VALUES ('" + master + "', '" + pass + "', '15:14:14', '1')", function (err, result, fields) {
+		con.query("insert into master_info (username, password, ts_login, logged) VALUES ('" + master + "', '" + pass + "', '" + return_formatted_date() + "', '1')", function (err, result, fields) {
     			if (err) { throw err;}
 		});
 	});
