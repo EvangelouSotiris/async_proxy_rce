@@ -59,7 +59,7 @@ app.post('/masterlog' , function(req, res){
 				res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
 			}
 			else {
-				con.query("update master_info set ts_login ='" + return_formatted_date + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
+				con.query("update master_info set ts_login ='" + return_formatted_date() + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
 					res.render('master_console', {page_name: master + '\'s console', master: master});
 				});
 			}
