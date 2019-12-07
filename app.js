@@ -38,6 +38,16 @@ con.connect( function(err) {
 	console.log("Connected to mysql login db");
 });
 
+mongo.connect("mongodb://localhost:27017/", function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("masters");
+  dbo.createCollection("master_info", function(err, res) {
+    if (err) throw err;
+    console.log("Collection created!");
+    db.close();
+  });
+});
+
 
 // GET AND POST METHODS
 
