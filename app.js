@@ -53,7 +53,7 @@ app.post('/masterlog' , function(req, res) {
 	//Login checking logic
 	con.connect(function(err) {
 		con.query("select count(username) from master_info where username = '" + master + "' and password = '" + pass +"'", function (err, result, fields) {
-			if (err) { throw err;}
+			if (err) { throw err; }
 
 			if (result[0]['count(username)'] == 0) {
 				//create the acc and log in after asking if its okay
@@ -89,7 +89,7 @@ app.post('/command_handler' , function(req, res) {
 
 app.post('/logout', function(req,res) {
 	let master = req.body.master;
-	console.log(master);
+
 	con.connect(function(err) {
 		con.query("update master_info set logged = 0 where username = '" + master + "'", function (err, result, fields) {
     			if (err) { throw err;}
