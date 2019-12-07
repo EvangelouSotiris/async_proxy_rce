@@ -3,9 +3,12 @@ const path = require("path");
 const exphbs  = require('express-handlebars');	
 const body_parser = require('body-parser');
 const mysql = require('mysql');
-const port = process.env.PORT || '3000';  //webapp on localhost:3000
+const mongo = require('mongodb').MongoClient
 
+
+const port = process.env.PORT || '3000';  //webapp on localhost:3000
 const app = express();
+
 
 app.engine('handlebars', exphbs({defaultLayout:'main'}));
 app.set('view engine', 'handlebars');
@@ -24,10 +27,17 @@ var con = mysql.createConnection({
 	database: "masters"
 });
 
+mongo.connect("mongodb://localhost:27017/masters", { useUnifiedTopology: true }, function(err, db){
+	if (err) throw err;
+  	console.log("Database created!");
+  	db.close();
+});
+
 con.connect( function(err) {
 	if (err) throw err;
 	console.log("Connected to mysql login db");
 });
+
 
 // GET AND POST METHODS
 
