@@ -3,8 +3,7 @@ const path = require("path");
 const exphbs  = require('express-handlebars');	
 const body_parser = require('body-parser');
 const mysql = require('mysql');
-const mongo = require('mongodb').MongoClient
-
+var mongoose = require('mongoose');
 
 const port = process.env.PORT || '3000';  //webapp on localhost:3000
 const app = express();
@@ -27,27 +26,18 @@ var con = mysql.createConnection({
 	database: "masters"
 });
 
-mongo.connect("mongodb://localhost:27017/masters", { useUnifiedTopology: true }, function(err, db){
-	if (err) throw err;
-  	console.log("Database created!");
-  	db.close();
-});
+mongoose.connect('mongodb://localhost/masters', {useNewUrlParser: true, useUnifiedTopology: true});
 
 con.connect( function(err) {
 	if (err) throw err;
 	console.log("Connected to mysql login db");
 });
 
-mongo.connect("mongodb://localhost:27017/", function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("masters");
-  dbo.createCollection("master_info", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close();
-  });
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+	console.log("Connection to Mongo DB.");
 });
-
 
 // GET AND POST METHODS
 
