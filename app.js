@@ -118,16 +118,26 @@ app.post('/masterlog' , function(req, res) {
 app.post('/create_and_log', function(req,res) {
 	let master = req.body.master;
 	let pass = req.body.master_pass;
+
 	con.connect(function(err) {
 		con.query("insert into master_info (username, password, ts_login, logged) VALUES ('" + master + "', '" + pass + "', '" + return_formatted_date() + "', '1')", function (err, result, fields) {
     			if (err) { throw err; }
 		});
+	});
+
+	var new_master_doc = new master_info({ name: master });
+	new_master_doc.save(function (err) {
+	  if (err) return handleError(err);
+	  console.log(master + " saved in mongo.");
 	});
 	res.render('master_console', {page_name: master + '\'s console', master: master});
 });
 
 app.post('/command_handler' , function(req, res) {
 	let new_command = req.body.new_command;
+	let master = req.body.master;
+
+	master_info.findOneAndUpdate({name : master}, {commands : [new_command]});
 });
 
 

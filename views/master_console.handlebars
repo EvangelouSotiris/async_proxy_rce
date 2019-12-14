@@ -5,6 +5,7 @@
 <div id="command">
 	<form method='POST' action="/command_handler">
 		<input type="text" style="width: 45%; outline: none; border:solid 2px black; border-radius: 10px; padding-left: 10px; height: 27px;" name="new_command" placeholder="Enter your command" autocomplete=off>
+		<input type="hidden" name="master" value={{master}}>
 		<input type="submit" value="Submit" style="outline: none; border: none; border-radius: 10px; padding-left: 10px; padding-right: 10px; padding-bottom: 5px; padding-top: 5px; background: white">
 	</form>
 </div>
