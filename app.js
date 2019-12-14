@@ -42,7 +42,10 @@ db.once('open', function() {
 const master_info_schema = mongoose.Schema({
 	name : String,
 	commands : [{
-		timestamp : String,
+		timestamp : {
+			type: Date,
+			default: Date.now
+		},
 		command : String,
 		slave : String,
 		results : [{slavename : String, output: String}]
@@ -55,27 +58,6 @@ var master_info = mongoose.model('master_info', master_info_schema);
 // GET AND POST METHODS
 
 app.get('/' , function(req,res) {
-
-	/* Create an instance of model SomeModel
-	var test = new master_info({
-		name:'gians', 
-		commands : [{timestamp:'1,1', command:'ls',slave:'all', results:[{}]}],
-		pinged_slaves : ['yolo']
-	});
-
-	// Save the new model instance, passing a callback
-	test.save(function (err) {
-	  if (err) return handleError(err);
-	  console.log("test saved");
-	});
-
-	master_info.find({}, function(err, docs) {
-	    if (!err){ 
-	        console.log(docs);
-	    } else {throw err;}
-
-	});
-	*/
 	res.render('login', {page_name:'login'});
 });
 
@@ -96,24 +78,24 @@ app.post('/masterlog' , function(req, res) {
 	let pass = req.body.master_pass;
 	//Login checking logic
 	con.connect(function(err) {
-		con.query("select count(username) from master_info where username = '" + master + "' and password = '" + pass +"'", function (err, result, fields) {
-			if (err) { throw err; }
-
-			if (result[0]['count(username)'] == 0) {
-				//create the acc and log in after asking if its okay
+		con.query("select password from master_info where username = '" + master + "'", function (err, result, fields) {
+			if (result.length == 0) { 
 				res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
 			}
 			else {
-				con.query("update master_info set ts_login ='" + return_formatted_date() + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
-					res.render('master_console', {page_name: master + '\'s console', master: master});
-				});
+				if (result[0]['password'] == pass) {
+					//create the acc and log in after asking if its okay
+					con.query("update master_info set ts_login ='" + return_formatted_date() + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
+						res.render('master_console', {page_name: master + '\'s console', master: master});
+					});
+				}
+				else {
+					res.render('login', {page_name:'login', error2:'The password you entered is incorrect.'});
+				}
 			}
 		});
 	});	
 });
-
-//TODO
-//1) ALLAGH TOU QUERY ME COUNT GIATI TWRA KAI O XRISTIS NA YPARXEI PALI THA VGALEI ERROR OTI DEN YPARXEI
 
 app.post('/create_and_log', function(req,res) {
 	let master = req.body.master;
@@ -135,10 +117,11 @@ app.post('/create_and_log', function(req,res) {
 
 app.post('/command_handler' , function(req, res) {
 	let new_command = req.body.new_command;
+	let slave_target = req.body.slave_target;
 	let master = req.body.master;
 
 	const condition = { name : master };
-	const update = { $push : { commands : {command : new_command} }};
+	const update = { $push : { commands : {command : new_command, slave : slave_target} }};
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		if (err) { throw err; }
 		console.log(doc);
