@@ -26,22 +26,56 @@ var con = mysql.createConnection({
 	database: "masters"
 });
 
-mongoose.connect('mongodb://localhost/masters', {useNewUrlParser: true, useUnifiedTopology: true});
-
 con.connect( function(err) {
 	if (err) throw err;
 	console.log("Connected to mysql login db");
 });
 
+mongoose.connect('mongodb://localhost/masters', {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
 	console.log("Connection to Mongo DB.");
 });
 
+
+const master_info_schema = mongoose.Schema({
+	name : String,
+	commands : [{
+		timestamp : String,
+		command : String,
+		slave : String,
+		results : [{slavename : String, output: String}]
+	}],
+	pinged_slaves : [String]
+});
+
+var master_info = mongoose.model('master_info', master_info_schema);
+
 // GET AND POST METHODS
 
 app.get('/' , function(req,res) {
+
+	/* Create an instance of model SomeModel
+	var test = new master_info({
+		name:'gians', 
+		commands : [{timestamp:'1,1', command:'ls',slave:'all', results:[{}]}],
+		pinged_slaves : ['yolo']
+	});
+
+	// Save the new model instance, passing a callback
+	test.save(function (err) {
+	  if (err) return handleError(err);
+	  console.log("test saved");
+	});
+
+	master_info.find({}, function(err, docs) {
+	    if (!err){ 
+	        console.log(docs);
+	    } else {throw err;}
+
+	});
+	*/
 	res.render('login', {page_name:'login'});
 });
 
