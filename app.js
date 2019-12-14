@@ -137,7 +137,13 @@ app.post('/command_handler' , function(req, res) {
 	let new_command = req.body.new_command;
 	let master = req.body.master;
 
-	master_info.findOneAndUpdate({name : master}, {commands : [new_command]});
+	const condition = { name : master };
+	const update = { $push : { commands : {command : new_command} }};
+	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
+		if (err) { throw err; }
+		console.log(doc);
+	});
+	res.render('master_console', {page_name: master + '\'s console', master: master});
 });
 
 
