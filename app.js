@@ -153,10 +153,10 @@ app.get('/slave_api' , function(req, res){
 			break;
 		}
 		if (!found){
-			res.send([list_commands[i]['command'] , list_commands[i]['timestamp']]);
+			res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
 		}
 		else {
-			res.send(200);
+			res.send(["Nope"]);
 		}
 	});
 
@@ -168,8 +168,25 @@ app.post('/slave_api', function(req,res){
 	let master_name = req.query.master_name;
 	let timestamp = req.query.timestamp;
 	let out = req.query.out;
-	const condition = { name : master_name , "commands.timestamp" : timestamp };
-	const update = { $push : { "commands.results" : {slavename : slave_name, output : out} } };
+	var i,position,list_commands;
+
+	var condition = { name : master_name , "commands.timestamp" : timestamp };
+	
+	master_info.findOne(condition, function(err, doc){
+		list_commands = doc['commands'];
+		for (i = 0; i < list_commands.length; i++){
+			if (timestamp == list_commands[i]['timestamp']){
+				break;
+			}
+		}
+	});
+
+	position = i;
+	if (position == list_commands.length) {
+		res.sendStatus(500);
+	}
+	condition = { name : master_name , "commands.timestamp" : timestamp };
+	const update = { $push : { "commands.$.position.$.results" : { slavename : slave_name, output : out } } };
 	
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		console.log(doc);
