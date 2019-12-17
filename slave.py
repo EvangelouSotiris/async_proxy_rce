@@ -19,7 +19,7 @@ while True:
 	command = temp
 	if command[0] == 'Nope':
 		print('No command for me yet.')
-		time.sleep(20)
+		time.sleep(60)
 		continue
 
 	timestamp = json.loads(response.content)[1]
