@@ -124,7 +124,6 @@ app.post('/command_handler' , function(req, res) {
 	const update = { $push : { commands : {command : new_command, slave : slave_target} }};
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		if (err) { throw err; }
-		console.log(doc);
 	});
 	res.render('master_console', {page_name: master + '\'s console', master: master});
 });
@@ -132,18 +131,17 @@ app.post('/command_handler' , function(req, res) {
 app.get('/slave_api' , function(req, res){
 	let slave_name = req.query.slave_name;
 	let master_name = req.query.master_name;
-	console.log(master_name + slave_name);
 	const condition = { name : master_name };
 	const update = { $push : { pinged_slaves : {slavename : slave_name} }};
 	
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		if (err) { throw err; }
-		console.log(doc);
 		let list_commands = doc['commands'];
-		let found = false;
+		let found;
 		for (var i = 0; i < list_commands.length; i++) {
+			found = false;
 			let results = list_commands[i]['results'];
-			for (var j=0; j < results; j++){
+			for (var j=0; j < results.length; j++){
 				if (results[j]['slavename'] == slave_name) {
 					found = true;
 					break;
@@ -155,7 +153,7 @@ app.get('/slave_api' , function(req, res){
 			break;
 		}
 		if (!found){
-			res.send(list_commands[i]);
+			res.send([list_commands[i]['command'] , list_commands[i]['timestamp']]);
 		}
 		else {
 			res.send(200);
@@ -164,6 +162,20 @@ app.get('/slave_api' , function(req, res){
 
 });
 
+app.post('/slave_api', function(req,res){
+	console.log(req.query);
+	let slave_name = req.query.slave_name;
+	let master_name = req.query.master_name;
+	let timestamp = req.query.timestamp;
+	let out = req.query.out;
+	const condition = { name : master_name , "commands.timestamp" : timestamp };
+	const update = { $push : { "commands.results" : {slavename : slave_name, output : out} } };
+	
+	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
+		console.log(doc);
+	});
+	res.sendStatus(200)
+});
 
 app.post('/logout', function(req,res) {
 	let master = req.body.master;
