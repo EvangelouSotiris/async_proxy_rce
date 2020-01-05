@@ -137,7 +137,7 @@ app.get('/slave_api' , function(req, res){
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		if (err) { throw err; }
 		let list_commands = doc['commands'];
-		let found;
+		let found = true;
 		for (var i = 0; i < list_commands.length; i++) {
 			found = false;
 			let results = list_commands[i]['results'];

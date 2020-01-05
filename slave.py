@@ -4,7 +4,7 @@ import subprocess
 import json
 import time
 
-master="apostolaras"
+master="user"
 slave="sot-pc"
 
 while True:
