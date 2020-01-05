@@ -167,32 +167,12 @@ app.post('/slave_api', function(req,res){
 	let master_name = req.query.master_name;
 	let timestamp = new Date(req.query.timestamp);
 	let out = req.query.out;
-	var i,position,list_commands;
 
-	var condition = { name : master_name , "commands.timestamp" : timestamp };
-
-	master_info.findOne(condition, function(err, doc){
-		list_commands = doc['commands'];
-
-		//console.log("Found: " + doc);
-		for (i = 0; i < list_commands.length; i++){
-			console.log(timestamp);
-			let temp = new Date(list_commands[i]['timestamp']);
-			if (timestamp.getTime() == temp.getTime()){
-				console.log("Found command.");
-				break;
-			}
-		}
-
-		position = i;
-		condition = { name : master_name , "commands.timestamp" : timestamp };
-		const update = { $push : { "commands.$[elem].results" : { slavename : slave_name, output : out } } };
-		
-		console.log('check pls')
-		master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.timestamp": timestamp }]}, function(err, doc){
-			console.log('UPDATED (pos='+position+')');
-			console.log(doc);
-		});
+	let	condition = { name : master_name , "commands.timestamp" : timestamp };
+	const update = { $push : { "commands.$[elem].results" : { slavename : slave_name, output : out } } };
+	
+	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.timestamp": timestamp }]}, function(err, doc){
+		console.log(doc);
 	});
 	res.sendStatus(200);
 });
