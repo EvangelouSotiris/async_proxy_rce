@@ -26,9 +26,9 @@
       			return new Promise(resolve => setTimeout(resolve, ms));
    			}
 
-			function slavename_change(master_name){
+			function slavename_change(){
 				var url = "http://localhost:3000/ping";
-				var params = "master="+master_name;
+				var params = "master="+document.getElementById('master_input').innerHTML;
 				var http = new XMLHttpRequest();
 				http.open("GET", url+"?"+params, true);
 				http.onreadystatechange = function(){
@@ -36,7 +36,25 @@
 				        var element = document.getElementById("slavenames");
 						element.innerHTML = http.responseText;
 						sleep(2000).then(() => {
-							slavename_change(master_name);
+							slavename_change();
+						});
+				    }
+				}
+				http.send(null);
+			}
+
+			function console_change(){
+				var url = "http://localhost:3000/getres";
+				var params = "master="+document.getElementById('master_input').innerHTML;
+				var http = new XMLHttpRequest();
+				http.open("GET", url+"?"+params, true);
+				http.onreadystatechange = function(){
+				    if(http.readyState == 4 && http.status == 200) {
+				        var element = document.getElementById("iframe_console");
+						var myContent = '<!DOCTYPE html><html><head><style>body{color : white;}</style></head><body>'+http.responseText+'</body></html>';
+						element.src = "data:text/html;charset=utf-8," + escape(myContent);
+						sleep(2000).then(() => {
+							console_change();
 						});
 				    }
 				}
@@ -44,8 +62,11 @@
 			}
 		</script>
 	</head>
-	<body>
+	<body onload="slavename_change(); console_change();">
 		{{{body}}}
+		{{#if master}}
+			<div type="hidden" id="master_input" style="color: transparent;">{{master}}</div>
+		{{/if}}
 		<div style="text-align:center; color:#F8B32F;">
 			{{#if error}} 
 				<div style="margin-bottom: 10px">{{error}}</div>

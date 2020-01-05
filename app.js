@@ -136,9 +136,16 @@ app.get('/slave_api' , function(req, res){
 	
 	master_info.findOne(condition, function(err, doc){
 		if (err) { throw err; }
+		if (doc == null){
+			res.send(["Nope"]);
+			return false;
+		}
 		let list_commands = doc['commands'];
 		let found = true;
 		for (var i = 0; i < list_commands.length; i++) {
+			if (list_commands[i]['slave'] != slave_name){
+				continue;
+			}
 			found = false;
 			let results = list_commands[i]['results'];
 			for (var j=0; j < results.length; j++){
@@ -153,6 +160,8 @@ app.get('/slave_api' , function(req, res){
 			break;
 		}
 
+		var position = i;
+
 		let ping_exists = false;
 		let list_pinged = doc['pinged_slaves'];
 		for (var i = 0; i < list_pinged.length; i++) {
@@ -165,7 +174,7 @@ app.get('/slave_api' , function(req, res){
 		if (!ping_exists){
 			master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 				if (!found){
-					res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
+					res.send([list_commands[position]['command'] , list_commands[position]['timestamp'] ]);
 				}
 				else {
 					res.send(["Nope"]);
@@ -174,7 +183,7 @@ app.get('/slave_api' , function(req, res){
 		}
 		else {
 			if (!found){
-				res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
+				res.send([list_commands[position]['command'] , list_commands[position]['timestamp'] ]);
 			}
 			else {
 				res.send(["Nope"]);
@@ -205,10 +214,39 @@ app.get('/ping', function(req,res){
 	let master = req.query.master;
 	const condition = { name : master };
 	master_info.findOne(condition, function(err, doc){
+		if (doc == null){
+			res.send("");
+			return false;
+		}
 		list_pinged = doc['pinged_slaves'];
 		var arr = "";
 		for(var i = 0; i < list_pinged.length; i++) {
 			arr = arr + " " + list_pinged[i]["slavename"];
+		}
+		res.send(arr);
+	});
+});
+
+app.get('/getres', function(req,res){
+	let master = req.query.master;
+	const condition = { name : master };
+	master_info.findOne(condition, function(err, doc){
+		if (doc == null){
+			res.send("");
+			return false;
+		}
+		list_commands = doc['commands'];
+		var arr = ""
+		for(var i = 0; i < list_commands.length; i++) {
+			if (list_commands[i]["results"].length == 0){
+				continue;
+			}
+			arr = arr + "<b style=\"color:#42AA68\">Command:</b> " + list_commands[i]["command"] + "<br>";
+			arr = arr + "<b style=\"color:#42AA68\">timestamp:</b> " + list_commands[i]["timestamp"] + "<br>";
+			for (var j=0; j < list_commands[i]["results"].length; j++) {
+				arr = arr + "<b style=\"color:#8BE9FD\">"+list_commands[i]["results"][j]["slavename"] + " </b><b style=\"color:#42AA68\">output:</b><br>";
+				arr = arr + list_commands[i]["results"][j]["output"] + "<br><br>";
+			}
 		}
 		res.send(arr);
 	});
