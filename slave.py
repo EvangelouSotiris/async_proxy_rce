@@ -19,7 +19,7 @@ while True:
 	command = temp
 	if command[0] == 'Nope':
 		print('No command for me yet.')
-		time.sleep(60)
+		time.sleep(10)
 		continue
 
 	timestamp = json.loads(response.content)[1]
@@ -33,4 +33,4 @@ while True:
 	r.post('http://localhost:3000/slave_api', params=payload_out)
 	
 	print('i ran command: ' + str(command))
-	time.sleep(20)
+	time.sleep(10)

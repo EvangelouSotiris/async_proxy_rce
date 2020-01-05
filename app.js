@@ -134,7 +134,7 @@ app.get('/slave_api' , function(req, res){
 	const condition = { name : master_name };
 	const update = { $push : { pinged_slaves : {slavename : slave_name} }};
 	
-	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
+	master_info.findOne(condition, function(err, doc){
 		if (err) { throw err; }
 		let list_commands = doc['commands'];
 		let found = true;
@@ -152,12 +152,36 @@ app.get('/slave_api' , function(req, res){
 			}
 			break;
 		}
-		if (!found){
-			res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
+
+		let ping_exists = false;
+		let list_pinged = doc['pinged_slaves'];
+		for (var i = 0; i < list_pinged.length; i++) {
+			if (list_pinged[i]['slavename'] == slave_name){
+				ping_exists = true;
+				break;
+			}
+		}
+
+		if (!ping_exists){
+			master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
+				if (!found){
+					res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
+				}
+				else {
+					res.send(["Nope"]);
+				}
+			});
 		}
 		else {
-			res.send(["Nope"]);
+			if (!found){
+				res.send([list_commands[i]['command'] , list_commands[i]['timestamp'] ]);
+			}
+			else {
+				res.send(["Nope"]);
+			}
 		}
+
+		
 	});
 
 });
