@@ -201,6 +201,19 @@ app.post('/slave_api', function(req,res){
 	res.sendStatus(200);
 });
 
+app.get('/ping', function(req,res){
+	let master = req.query.master;
+	const condition = { name : master };
+	master_info.findOne(condition, function(err, doc){
+		list_pinged = doc['pinged_slaves'];
+		var arr = "";
+		for(var i = 0; i < list_pinged.length; i++) {
+			arr = arr + " " + list_pinged[i]["slavename"];
+		}
+		res.send(arr);
+	});
+});
+
 app.post('/logout', function(req,res) {
 	let master = req.body.master;
 

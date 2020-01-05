@@ -11,13 +11,13 @@
 	</form>
 </div>
 
-<div style="text-align: center">
+<div style="text-align: center" onload="slavename_change('{{master}}')">
 	<div style="color: white;">
 		General info
 		<br>
 		Master's name: {{master}}
 		<br>
-		Slave names:<div id="slavenames"></div>
+		Slave names: <div id="slavenames" style="display: inline-block;"></div>
 		<br>
 		<form method='POST' action="/logout">
 			<input type="hidden" name="master" value={{master}}>

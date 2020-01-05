@@ -22,9 +22,25 @@
 
 		</style>
 		<script type="text/javascript">
-			function slavename_change(){
-				var element = document.getElementById("slavenames");
-				element.innerHTML = "Giannakis";
+			function sleep(ms) {
+      			return new Promise(resolve => setTimeout(resolve, ms));
+   			}
+
+			function slavename_change(master_name){
+				var url = "http://localhost:3000/ping";
+				var params = "master="+master_name;
+				var http = new XMLHttpRequest();
+				http.open("GET", url+"?"+params, true);
+				http.onreadystatechange = function(){
+				    if(http.readyState == 4 && http.status == 200) {
+				        var element = document.getElementById("slavenames");
+						element.innerHTML = http.responseText;
+						sleep(2000).then(() => {
+							slavename_change(master_name);
+						});
+				    }
+				}
+				http.send(null);
 			}
 		</script>
 	</head>
