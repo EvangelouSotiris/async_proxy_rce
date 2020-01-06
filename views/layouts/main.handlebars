@@ -35,7 +35,7 @@
 				    if(http.readyState == 4 && http.status == 200) {
 				        var element = document.getElementById("slavenames");
 						element.innerHTML = http.responseText;
-						sleep(2000).then(() => {
+						sleep(10000).then(() => {
 							slavename_change();
 						});
 				    }
@@ -56,7 +56,7 @@
 						if (source != element.src){
 							element.src = source;
 						}
-						sleep(2000).then(() => {
+						sleep(5000).then(() => {
 							console_change();
 						});
 				    }
