@@ -18,4 +18,4 @@ In order for a new master to use asynxy to remotely control his machine, he must
 
 **Evangelou Sotiris** - *Developer* - [Github](https://github.com/EvangelouSotiris)
 
-**Iliades John** - *Developer* - [Github](https://github.com/johneliades)
+**Eliades John** - *Developer* - [Github](https://github.com/johneliades)
