@@ -145,7 +145,7 @@ app.get('/slave_api' , function(req, res){
 		let list_commands = doc['commands'];
 		let found = true;
 		for (var i = 0; i < list_commands.length; i++) {
-			if (list_commands[i]['slave'] != slave_name){
+			if (list_commands[i]['slave'] != slave_name && list_commands[i]['slave'] != "all"){
 				continue;
 			}
 			found = false;

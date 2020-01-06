@@ -66,7 +66,7 @@
 				http.onreadystatechange = function(){
 				    if(http.readyState == 4 && http.status == 200) {
 				        var element = document.getElementById("iframe_console");
-						var myContent = '<!DOCTYPE html><html><head></head><body>'+http.responseText+'</body></html>';
+						var myContent = '<!DOCTYPE html><html><head></head><body style="color:white">'+http.responseText+'</body></html>';
 						var source = "data:text/html;charset=utf-8," + escape(myContent);
 						if (source != element.src){
 							element.src = source;
