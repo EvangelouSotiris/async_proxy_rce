@@ -50,7 +50,10 @@ const master_info_schema = mongoose.Schema({
 		slave : String,
 		results : [{slavename : String, output: String}]
 	}],
-	pinged_slaves : [{ slavename : String}]
+	pinged_slaves : [{
+		slavename : String,
+		semaphore : Number
+	}]
 });
 
 var master_info = mongoose.model('master_info', master_info_schema);
@@ -132,8 +135,7 @@ app.get('/slave_api' , function(req, res){
 	let slave_name = req.query.slave_name;
 	let master_name = req.query.master_name;
 	const condition = { name : master_name };
-	const update = { $push : { pinged_slaves : {slavename : slave_name} }};
-	
+	const update = { $push : { pinged_slaves : {slavename : slave_name, semaphore : 0} }};
 	master_info.findOne(condition, function(err, doc){
 		if (err) { throw err; }
 		if (doc == null){
@@ -182,12 +184,15 @@ app.get('/slave_api' , function(req, res){
 			});
 		}
 		else {
-			if (!found){
-				res.send([list_commands[position]['command'] , list_commands[position]['timestamp'] ]);
-			}
-			else {
-				res.send(["Nope"]);
-			}
+			const update2 = { "pinged_slaves.$[elem].semaphore" : 0 };
+			master_info.findOneAndUpdate(condition, update2, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.slavename": slave_name }]}, function(err, doc){
+				if (!found){
+					res.send([list_commands[position]['command'] , list_commands[position]['timestamp'] ]);
+				}
+				else {
+					res.send(["Nope"]);
+				}
+			});
 		}
 
 		
@@ -204,9 +209,7 @@ app.post('/slave_api', function(req,res){
 	let	condition = { name : master_name , "commands.timestamp" : timestamp };
 	const update = { $push : { "commands.$[elem].results" : { slavename : slave_name, output : out } } };
 	
-	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.timestamp": timestamp }]}, function(err, doc){
-		console.log(doc);
-	});
+	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.timestamp": timestamp }]}, function(err, doc){});
 	res.sendStatus(200);
 });
 
@@ -220,7 +223,18 @@ app.get('/ping', function(req,res){
 		}
 		list_pinged = doc['pinged_slaves'];
 		var arr = "";
-		for(var i = 0; i < list_pinged.length; i++) {
+		for(var i = 0; i < list_pinged.length; i++){
+			if (list_pinged[i]["semaphore"] > 3){
+				var slave_name = list_pinged[i]["slavename"];
+				const update = { $pull : { pinged_slaves : { slavename : slave_name } } };
+				master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){});
+			}
+			else {
+				var slave_name = list_pinged[i]["slavename"];
+				const condition2 = { name : master };
+				const update = { $inc : { "pinged_slaves.$[elem].semaphore" : 1 } };
+				master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true, "arrayFilters": [{ "elem.slavename": slave_name }]}, function(err, doc){});
+			}
 			arr = arr + " " + list_pinged[i]["slavename"];
 		}
 		res.send(arr);

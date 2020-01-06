@@ -12,19 +12,13 @@
 </div>
 
 <div style="text-align: center">
-	<div style="color: white;">
-		General info
-		<br>
-		Master's name: {{master}}
-		<br>
-		Slave names: <div id="slavenames" style="display: inline-block;"></div>
-		<br>
+	<div style="color: white; line-height:0.8em;">
+		General info<br>
+		Master's name: <p style="color: #50FA7B; display: inline-block;">{{master}}</p><br>
+		Online slaves: <div id="slavenames" style="color: #50FA7B; display: inline-block;"></div><br>
 		<form method='POST' action="/logout">
 			<input type="hidden" name="master" value={{master}}>
-			<input type="submit" value="Log out" style="outline: none; border: none; border-radius: 10px; margin-top:10px; padding-left: 15px; padding-right: 15px; padding-bottom: 7px; padding-top: 7px; background: white">
+			<input id="subutton" type="submit" value="Log out" style="outline: none; border: none; border-radius: 10px; margin-top:24px; padding-left: 15px; padding-right: 15px; padding-bottom: 7px; padding-top: 7px;">
 		</form>
-	</div>
-	<div id="console" style="text-align: center;">
-		<iframe style="border: solid 2px; width: 30%; height: 10%; margin-bottom: 30px; margin-top: 0px" src=""></iframe> 
 	</div>
 </div>

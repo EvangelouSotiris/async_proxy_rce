@@ -20,6 +20,21 @@
 				transition: 0.1s;
 			}
 
+			#subutton {
+				font-family: 'Oswald';
+				background-color: transparent;
+				color: #BC98C6;
+				font-size: 0.8em;
+			}
+
+			#subutton:hover {
+				font-family: 'Oswald';
+				background-color: #BC98C6;
+				color: black;
+				transition: 0.2s;
+				cursor: pointer;
+			}
+
 		</style>
 		<script type="text/javascript">
 			function sleep(ms) {
@@ -35,7 +50,7 @@
 				    if(http.readyState == 4 && http.status == 200) {
 				        var element = document.getElementById("slavenames");
 						element.innerHTML = http.responseText;
-						sleep(10000).then(() => {
+						sleep(5000).then(() => {
 							slavename_change();
 						});
 				    }
@@ -51,7 +66,7 @@
 				http.onreadystatechange = function(){
 				    if(http.readyState == 4 && http.status == 200) {
 				        var element = document.getElementById("iframe_console");
-						var myContent = '<!DOCTYPE html><html><head><style>body{color : white;}</style></head><body>'+http.responseText+'</body></html>';
+						var myContent = '<!DOCTYPE html><html><head></head><body>'+http.responseText+'</body></html>';
 						var source = "data:text/html;charset=utf-8," + escape(myContent);
 						if (source != element.src){
 							element.src = source;
@@ -76,7 +91,7 @@
 				<form method='POST' action="/create_and_log">
 					<input type="hidden" name="master" value="{{master}}">
 					<input type="hidden" name="master_pass" value="{{pass}}">
-					<input type="submit" value="Accept" style="outline: none; border: none; border-radius: 10px; padding-left: 15px; padding-right: 15px; padding-bottom: 7px; padding-top: 7px; background: white">
+					<input id="subutton" type="submit" value="Accept" style="outline: none; border: none; border-radius: 10px; padding-left: 15px; padding-right: 15px; padding-bottom: 7px; padding-top: 7px;">
 				</form>
 			{{/if}}
 			{{#if error2}} 

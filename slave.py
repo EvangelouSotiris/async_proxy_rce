@@ -4,8 +4,8 @@ import subprocess
 import json
 import time
 
-master="user"
-slave="sot-pc"
+master="sotiris"
+slave="test"
 
 while True:
 	print('\nChecking if there is any command for me.')
@@ -20,7 +20,7 @@ while True:
 		command = temp
 		if command[0] == 'Nope':
 			print('No command for me yet.')
-			time.sleep(10)
+			time.sleep(5)
 			continue
 
 		timestamp = json.loads(response.content)[1]
@@ -34,7 +34,7 @@ while True:
 		r.post('http://localhost:3000/slave_api', params=payload_out)
 		
 		print('i ran command: ' + str(command))
-		time.sleep(10)
+		time.sleep(5)
 	except Exception as e:
 		print(e)
-		time.sleep(10)
+		time.sleep(5)
