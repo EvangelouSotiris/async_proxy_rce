@@ -19,7 +19,7 @@ app.listen(port, function() {
 	console.log('App started on port '+port);
 });
 
-var contents = JSON.parse(fs.readFileSync('../creds.txt', 'utf8'));
+var contents = JSON.parse(fs.readFileSync('.config/creds.txt', 'utf8'));
 var con = mysql.createConnection({
 	host: "localhost",
 	user: contents.user,
