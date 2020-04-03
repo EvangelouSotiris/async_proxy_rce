@@ -4,7 +4,7 @@ const exphbs  = require('express-handlebars');
 const body_parser = require('body-parser');
 const mysql = require('mysql');
 var mongoose = require('mongoose');
-
+var fs = require('fs');
 const port = process.env.PORT || '3000';  //webapp on localhost:3000
 const app = express();
 
@@ -19,11 +19,12 @@ app.listen(port, function() {
 	console.log('App started on port '+port);
 });
 
+var contents = JSON.parse(fs.readFileSync('../creds.txt', 'utf8'));
 var con = mysql.createConnection({
 	host: "localhost",
-	user: "root",
-	password: "swt",
-	database: "masters"
+	user: contents.user,
+	password: contents.pass,
+	database: contents.dbna
 });
 
 con.connect( function(err) {
@@ -31,7 +32,7 @@ con.connect( function(err) {
 	console.log("Connected to mysql login db");
 });
 
-mongoose.connect('mongodb://localhost/masters', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost/'+contents.dbna, {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
