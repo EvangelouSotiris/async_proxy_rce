@@ -1,0 +1,26 @@
+{
+  "name": "async_proxy_rce",
+  "version": "1.0.0",
+  "description": "## Description Asynxy implements a Master-Proxy-Slave formation. The web application is acting as middleware, receiving commands from masters, informing online slaves of commands and collecting their results to show back to the masters' web interface. The whole process is achieved through asynchronous REST API calls from the slaves to the middleware, which means that the master can control an online slave without the need for the slave machine to have a public IP or be in the same network.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://EvangelouSotiris@github.com/EvangelouSotiris/async_proxy_rce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EvangelouSotiris/async_proxy_rce/issues"
+  },
+  "homepage": "https://github.com/EvangelouSotiris/async_proxy_rce#readme",
+  "devDependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^4.0.3",
+    "mongoose": "^5.9.7",
+    "mysql": "^2.18.1"
+  }
+}
