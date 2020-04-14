@@ -12,8 +12,7 @@ Asynxy implements a Master-Proxy-Slave formation. The web application is acting 
 
 ## Using Asynxy
 
-In order for a new master to use asynxy to remotely control his machine, he must first run the script <b> slave.py </b> in the slave machine after manually editing the fields for <i> master name , slave name </i> and the link for the webapp on http://snf-871528.vm.okeanos.grnet.gr:3000/ .
-
+In order for a new master to use asynxy to remotely control his machine, he must first run the script <b> slave.py </b> in the slave machine after manually editing the fields for <i> master name , slave name </i> and the link for the webapp on -LINK WILL BE ADDED SOON-.
 ## Authors
 
 **Evangelou Sotiris** - *Developer* - [Github](https://github.com/EvangelouSotiris)
