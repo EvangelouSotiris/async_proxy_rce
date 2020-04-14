@@ -1,0 +1,29 @@
+version: '3'
+services:
+ mongodb:
+  build: ./mongodb
+  ports:
+   - "27017:27017"
+ mariadb:
+  build: ./mariadb
+  ports:
+   - "3306:3306"
+  environment:
+   - MYSQL_USER=${MYSQL_USER}
+   - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+   - MYSQL_DATABASE=${MYSQL_DATABASE}
+   - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+ application:
+  build: ./application
+  ports:
+   - "3000:3000"
+  environment:
+   - MYSQL_USER=${MYSQL_USER}
+   - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+   - MYSQL_DATABASE=${MYSQL_DATABASE}
+   - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+   - MARIADB_HOST=mariadb
+   - MONGODB_HOST=mongodb
+  depends_on:
+   - mariadb
+   - mongodb
