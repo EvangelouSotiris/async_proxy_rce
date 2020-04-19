@@ -88,24 +88,25 @@ app.post('/masterlog' , function(req, res) {
 	//Login checking logic
 	con.connect(function(err) {
 		con.query("select password from master_info where username = '" + master + "'", function (err, result, fields) {
-			if (result.length == 0) { 
-				res.render('login', {page_name:'login', error:'The master you entered doesn\'t exist. Click accept to create this master account.' , master:master, pass:pass});
+			if (result.length == 0) {
+				res.status(401).json({error: "Unknown user."});
 			}
 			else {
 				if (result[0]['password'] == pass) {
 					//create the acc and log in after asking if its okay
 					con.query("update master_info set ts_login ='" + return_formatted_date() + "', logged = 1 where username = '" + master + "'", function (err, result, fields) {
-						res.render('master_console', {page_name: master + '\'s console', master: master});
+						res.status(200).json({user: master});
 					});
 				}
 				else {
-					res.render('login', {page_name:'login', error2:'The password you entered is incorrect.'});
+					res.status(401).json({error: "Incorrect Password."});
 				}
 			}
 		});
 	});	
 });
 
+// Most likely not needed
 app.post('/create_and_log', function(req,res) {
 	let master = req.body.master;
 	let pass = req.body.master_pass;
@@ -124,6 +125,7 @@ app.post('/create_and_log', function(req,res) {
 	res.render('master_console', {page_name: master + '\'s console', master: master});
 });
 
+
 app.post('/command_handler' , function(req, res) {
 	let new_command = req.body.new_command;
 	let slave_target = req.body.slave_target;
@@ -134,7 +136,7 @@ app.post('/command_handler' , function(req, res) {
 	master_info.findOneAndUpdate(condition, update, options={useFindAndModify :false, new : true}, function(err, doc){
 		if (err) { throw err; }
 	});
-	res.render('master_console', {page_name: master + '\'s console', master: master});
+	res.status(200).json(success:true);
 });
 
 app.get('/slave_api' , function(req, res){
@@ -272,6 +274,7 @@ app.get('/getres', function(req,res){
 	});
 });
 
+// Most likely not needed.
 app.post('/logout', function(req,res) {
 	let master = req.body.master;
 
